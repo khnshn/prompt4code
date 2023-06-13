@@ -1,5 +1,5 @@
-<p align="center">
-  <img alt="Prompt4Code logo" height="100" src="https://raw.githubusercontent.com/khnshn/Prompt4Code/main/dialog.png">
+<p align="left">
+  <img alt="Prompt4Code logo" height="100" src="./dialog.png">
 </p>
 
 # Prompt4Code
