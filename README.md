@@ -4,7 +4,7 @@
 
 # Prompt4Code: Automated In-Context Learning to Generate Code Provided Code Examples with Docstrings
 
-[![Prompt4Code version](https://img.shields.io/badge/version-Prompt4Code-red)](#)
+[![Prompt4Code version](https://img.shields.io/badge/Prompt4Code-v0.1.0-blue)](#)
 [![license](https://img.shields.io/badge/license-MIT-green)](#)
 
 **Prompt4Code** is a command line tool that facilitates in-context learning, automatically by reading local source code examples and extracting doctrings and turning them into a conversation with openai's GPT models.
