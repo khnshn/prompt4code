@@ -159,14 +159,19 @@ if args.data and args.prompt:
             if verbose:
                 print_warning(f"Finish reason: {reason}")
                 print_info(response)
-        if args.save:
-            with open(
-                f"{args.save}response_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.txt",
-                "w",
-            ) as f:
-                f.write(response)
-            if verbose:
-                print_success("Response saved successfully")
+            if args.save:
+                with open(
+                    f"{args.save}response_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.txt",
+                    "w",
+                ) as f:
+                    f.write(response)
+                if verbose:
+                    print_success("Response saved successfully")
+            if args.run:
+                if verbose:
+                    print_info("Running the response")
+                exec(response)
+
 else:
     print_fail(
         "Not enough arguments are provided. Run with -h or --help for more information."
