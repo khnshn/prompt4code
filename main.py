@@ -39,7 +39,7 @@ def print_fail(msg):
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "-d", "--dir", help="training source code files directory", type=str
+    "-d", "--data", help="training source code files directory", type=str
 )
 parser.add_argument(
     "-v",
@@ -83,6 +83,13 @@ parser.add_argument(
     action="store_true",
 )
 
+parser.add_argument(
+    "-r",
+    "--run",
+    help="immediately run and verbose the generated code",
+    action="store_true",
+)
+
 args = parser.parse_args()
 
 
@@ -97,13 +104,13 @@ PROMPT_HEAD = [
     }
 ]
 
-if args.dir and args.prompt:
+if args.data and args.prompt:
     if verbose:
         print_info(f"running with args: {args}")
-        print_info(f"checking directory: {args.dir}")
+        print_info(f"checking directory: {args.data}")
     prompt = PROMPT_HEAD.copy()
     counter = 0
-    files = os.listdir(args.dir)
+    files = os.listdir(args.data)
     if args.shuffle:
         random.shuffle(files)
         if verbose:
@@ -112,8 +119,8 @@ if args.dir and args.prompt:
         if file.endswith(".py") and counter < args.limit:
             counter += 1
             if verbose:
-                print_info(f"parsing {os.path.join(args.dir, file)}")
-            with open(os.path.join(args.dir, file), "r") as py:
+                print_info(f"parsing {os.path.join(args.data, file)}")
+            with open(os.path.join(args.data, file), "r") as py:
                 docstrings = get_docstrings(py)
                 user_content = f"Write a {DOMAIN} program in {LANGUAGE} using {MAIN_FRAMEWORK} with the following specifications:"
                 user_content += (
@@ -148,15 +155,16 @@ if args.dir and args.prompt:
         if args.callapi:
             if verbose:
                 print_info(f"Calling OpenAI API with {args.model}")
-            response = gpt.chat(prompt, args.model)
+            reason, response = gpt.chat(prompt, args.model)
             if verbose:
+                print_warning(f"Finish reason: {reason}")
                 print_info(response)
         if args.save:
             with open(
                 f"{args.save}response_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.txt",
                 "w",
             ) as f:
-                f.write(json.dumps(response))
+                f.write(response)
             if verbose:
                 print_success("Response saved successfully")
 else:

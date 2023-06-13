@@ -14,7 +14,11 @@ def chat(messages, model="gpt-3.5-turbo"):
         model=model,
         messages=messages,
     )
-    return response["choices"][0]["message"]["content"]
+    print(response)
+    return (
+        response["choices"][0]["finish_reason"],
+        response["choices"][0]["message"]["content"],
+    )
 
 
 if __name__ == "__main__":
