@@ -97,6 +97,7 @@ verbose = args.verbose
 LANGUAGE = "python"
 DOMAIN = "simulation"
 MAIN_FRAMEWORK = "simpy"
+EXTENTION = ".py"
 PROMPT_HEAD = [
     {
         "role": "system",
@@ -116,7 +117,7 @@ if args.data and args.prompt:
         if verbose:
             print_info("Shuffled")
     for file in files:
-        if file.endswith(".py") and counter < args.limit:
+        if file.endswith(EXTENTION) and counter < args.limit:
             counter += 1
             if verbose:
                 print_info(f"parsing {os.path.join(args.data, file)}")
