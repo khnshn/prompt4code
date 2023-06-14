@@ -93,7 +93,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-verbose = args.verbose
+VERBOSE = args.verbose
 LANGUAGE = "python"
 DOMAIN = "simulation"
 MAIN_FRAMEWORK = "simpy"
@@ -105,75 +105,74 @@ PROMPT_HEAD = [
     }
 ]
 
-if args.data and args.prompt:
-    if verbose:
-        print_info(f"running with args: {args}")
-        print_info(f"checking directory: {args.data}")
-    prompt = PROMPT_HEAD.copy()
-    counter = 0
-    files = os.listdir(args.data)
-    if args.shuffle:
-        random.shuffle(files)
-        if verbose:
-            print_info("Shuffled")
-    for file in files:
-        if file.endswith(EXTENTION) and counter < args.limit:
-            counter += 1
-            if verbose:
-                print_info(f"parsing {os.path.join(args.data, file)}")
-            with open(os.path.join(args.data, file), "r") as py:
-                docstrings = get_docstrings(py)
-                user_content = f"Write a {DOMAIN} program in {LANGUAGE} using {MAIN_FRAMEWORK} with the following specifications:"
-                user_content += (
-                    f" a {docstrings['type']} as {docstrings['docstring_text']}"
-                )
-                for content in docstrings["content"]:
+if __name__ == "__main__":
+    if args.data and args.prompt:
+        if VERBOSE:
+            print_info(f"running with args: {args}")
+            print_info(f"checking directory: {args.data}")
+        prompt = PROMPT_HEAD.copy()
+        counter = 0
+        files = os.listdir(args.data)
+        if args.shuffle:
+            random.shuffle(files)
+            if VERBOSE:
+                print_info("Shuffled")
+        for file in files:
+            if file.endswith(EXTENTION) and counter < args.limit:
+                counter += 1
+                if VERBOSE:
+                    print_info(f"parsing {os.path.join(args.data, file)}")
+                with open(os.path.join(args.data, file), "r") as py:
+                    docstrings = get_docstrings(py)
+                    user_content = f"Write a {DOMAIN} program in {LANGUAGE} using {MAIN_FRAMEWORK} with the following specifications:"
                     user_content += (
-                        f" with a {content['type']} that {content['docstring_text']}"
+                        f" a {docstrings['type']} as {docstrings['docstring_text']}"
                     )
-                prompt.append({"role": "user", "content": user_content})
-                py.seek(0, 0)
-                source_code = py.read()
-                source_code = re.sub(
-                    r'(?s)(""".*?""")|#.*?$', "", source_code, flags=re.MULTILINE
-                )
-                prompt.append({"role": "assistant", "content": source_code})
-                if verbose:
-                    print(f"Docstrings: {docstrings}")
-                    print(f"Source code: {source_code}")
-    if prompt != PROMPT_HEAD:
-        prompt.append({"role": "user", "content": args.prompt})
-        if verbose:
-            print(f"prompt: {prompt}")
-        if args.save:
-            with open(
-                f"{args.save}prompt_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.json",
-                "w",
-            ) as f:
-                f.write(json.dumps(prompt))
-            if verbose:
-                print_success("Prompt saved successfully")
-        if args.callapi:
-            if verbose:
-                print_info(f"Calling OpenAI API with {args.model}")
-            reason, response = gpt.chat(prompt, args.model)
-            if verbose:
-                print_warning(f"Finish reason: {reason}")
-                print_info(response)
+                    for content in docstrings["content"]:
+                        user_content += f" with a {content['type']} that {content['docstring_text']}"
+                    prompt.append({"role": "user", "content": user_content})
+                    py.seek(0, 0)
+                    source_code = py.read()
+                    source_code = re.sub(
+                        r'(?s)(""".*?""")|#.*?$', "", source_code, flags=re.MULTILINE
+                    )
+                    prompt.append({"role": "assistant", "content": source_code})
+                    if VERBOSE:
+                        print(f"Docstrings: {docstrings}")
+                        print(f"Source code: {source_code}")
+        if prompt != PROMPT_HEAD:
+            prompt.append({"role": "user", "content": args.prompt})
+            if VERBOSE:
+                print(f"prompt: {prompt}")
             if args.save:
                 with open(
-                    f"{args.save}response_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.txt",
+                    f"{args.save}prompt_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.json",
                     "w",
                 ) as f:
-                    f.write(response)
-                if verbose:
-                    print_success("Response saved successfully")
-            if args.run:
-                if verbose:
-                    print_info("Running the response")
-                exec(response)
+                    f.write(json.dumps(prompt))
+                if VERBOSE:
+                    print_success("Prompt saved successfully")
+            if args.callapi:
+                if VERBOSE:
+                    print_info(f"Calling OpenAI API with {args.model}")
+                reason, response = gpt.chat(prompt, args.model)
+                if VERBOSE:
+                    print_warning(f"Finish reason: {reason}")
+                    print_info(response)
+                if args.save:
+                    with open(
+                        f"{args.save}response_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.txt",
+                        "w",
+                    ) as f:
+                        f.write(response)
+                    if VERBOSE:
+                        print_success("Response saved successfully")
+                if args.run:
+                    if VERBOSE:
+                        print_info("Running the response")
+                    exec(response)
 
-else:
-    print_fail(
-        "Not enough arguments are provided. Run with -h or --help for more information."
-    )
+    else:
+        print_fail(
+            "Not enough arguments are provided. Run with -h or --help for more information."
+        )
