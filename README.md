@@ -25,14 +25,11 @@ _Run `python main.py -h` or `python main.py --help`:_
 -h, --help show this help message and exit
 -d DATA, --data DATA training source code files directory
 -v, --verbose display detailed processing information
--p PROMPT, --prompt PROMPT
-a short sentence or phrase that is used to initiate a conversation
--m MODEL, --model MODEL
-gpt model to be used
+-p PROMPT, --prompt PROMPT a short sentence or phrase that is used to initiate a conversation
+-m MODEL, --model MODEL gpt model to be used
 -s SAVE, --save SAVE directory to save the prompt as a json file
 -ca, --callapi calls openai api to generate response based on the input prompt
--l LIMIT, --limit LIMIT
-limit the number of input files for context learning
+-l LIMIT, --limit LIMIT limit the number of input files for context learning
 -sh, --shuffle shuffle the order of the list of files to traverse
 -r, --run immediately run and verbose the generated code
 ```
