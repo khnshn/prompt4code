@@ -54,7 +54,7 @@ parser.add_argument(
     type=str,
 )
 parser.add_argument(
-    "-m", "--model", help="gpt model to be used", default="gpt-3.5-turbo"
+    "-m", "--model", help="gpt model to be used", default="gpt-3.5-turbo-16k"
 )
 parser.add_argument(
     "-s",
