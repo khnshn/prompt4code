@@ -2,7 +2,7 @@
   <img alt="Prompt4Code logo" height="100" src="./dialog.png">
 </p>
 
-# Prompt4Code: Automated In-Context Learning to Generate Code Provided Code Examples with Docstrings
+# Prompt4Code: Automated In-Context Learning to Generate Code Provided Examples with Docstrings
 
 [![Prompt4Code version](https://img.shields.io/badge/Prompt4Code-v0.1.0-blue)](#)
 [![license](https://img.shields.io/badge/license-MIT-green)](#)
