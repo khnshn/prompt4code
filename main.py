@@ -94,6 +94,7 @@ args = parser.parse_args()
 
 
 VERBOSE = args.verbose
+EMPHASIS = "Output executable code with no comments and no explanations."
 LANGUAGE = "python"
 DOMAIN = "simulation"
 MAIN_FRAMEWORK = "simpy"
@@ -130,7 +131,9 @@ if __name__ == "__main__":
                     )
                     for content in docstrings["content"]:
                         user_content += f" with a {content['type']} that {content['docstring_text']}"
-                    prompt.append({"role": "user", "content": user_content})
+                    prompt.append(
+                        {"role": "user", "content": f"{user_content}. {EMPHASIS}"}
+                    )
                     py.seek(0, 0)
                     source_code = py.read()
                     source_code = re.sub(
@@ -141,7 +144,7 @@ if __name__ == "__main__":
                         print(f"Docstrings: {docstrings}")
                         print(f"Source code: {source_code}")
         if prompt != PROMPT_HEAD:
-            prompt.append({"role": "user", "content": args.prompt})
+            prompt.append({"role": "user", "content": f"{args.prompt}. {EMPHASIS}"})
             if VERBOSE:
                 print(f"prompt: {prompt}")
             if args.save:
