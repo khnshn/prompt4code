@@ -94,6 +94,17 @@ args = parser.parse_args()
 
 
 VERBOSE = args.verbose
+ALLOWED_BUILTINS = {
+    "__builtins__": {
+        "__import__": __import__,
+        "__build_class__": __build_class__,
+        "__name__": __name__,
+        "print": print,
+        "random": random,
+        "object": object,
+        "range": range,
+    }
+}
 EMPHASIS = "Output executable code with no comments and no explanations."
 LANGUAGE = "python"
 DOMAIN = "simulation"
@@ -173,7 +184,7 @@ if __name__ == "__main__":
                 if args.run:
                     if VERBOSE:
                         print_info("Running the response")
-                    exec(response, {}, {})
+                    exec(response, ALLOWED_BUILTINS, {})
 
     else:
         print_fail(
