@@ -39,7 +39,7 @@ _Run `python main.py -h` or `python main.py --help`:_
 ```
 python main.py
 --prompt "this is my example prompt"
---data ./examples /
+--data ./examples
 --verbose
 --shuffle
 --run
