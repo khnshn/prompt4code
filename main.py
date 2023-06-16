@@ -170,7 +170,7 @@ if __name__ == "__main__":
                 if args.run:
                     if VERBOSE:
                         print_info("Running the response")
-                    exec(response)
+                    exec(response, {}, {})
 
     else:
         print_fail(
