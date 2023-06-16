@@ -34,14 +34,20 @@ _Run `python main.py -h` or `python main.py --help`:_
 -r, --run immediately run and verbose the generated code
 ```
 
-## Example
+## Example 1
 
 ```
 python main.py
 --prompt "this is my example prompt"
 --data ./examples
 --verbose
+--limit 3
 --shuffle
---run
 --save ./responses/
+```
+
+## Example 2
+
+```
+python main.py --prompt "write a python program using simpy that simulates teachers activities during a day. teachers will receive notifications on their smartphone every 2 hours. then depending on their situation they either respond to the notification or ignore it. estimate the response rate to such notfication. run such program for 50 teachers" --data ./examples --verbose --shuffle --run --save ./responses/ --callapi
 ```
