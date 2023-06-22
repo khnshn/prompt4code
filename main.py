@@ -113,7 +113,7 @@ EXTENTION = ".py"
 PROMPT_HEAD = [
     {
         "role": "system",
-        "content": "You are a helpful assistant that generates python code per request. Your output only includes executable source code. Your output does not include any sort of explanation nor description",
+        "content": "You are a helpful assistant that generates python code per request. Your output only includes executable source code. Your output does not include any sort of explanation or description.",
     }
 ]
 
