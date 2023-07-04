@@ -1,0 +1,21 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Prompt4Code
+message: >-
+  Prompt4Code is a command line tool that facilitates
+  in-context learning, automatically by reading local source
+  code examples and extracting doctrings and turning them
+  into a conversation with openai's GPT models.
+type: software
+authors:
+  - given-names: Alireza
+    family-names: Khanshan
+    orcid: 'https://orcid.org/0000-0002-9112-4695'
+repository-code: 'https://github.com/khnshn/prompt4code'
+keywords:
+  - prompt engineering
+  - large language model
+license: MIT
+version: 0.1.0
