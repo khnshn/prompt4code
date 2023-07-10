@@ -1,0 +1,29 @@
+import random
+import simpy
+
+RANDOM_SEED = 42
+NUM_TEACHERS = 50
+SIM_TIME = 480  # Time for simulation in minutes (8 hours)
+
+def teacher(env, name, response_rate):
+    
+    while True:
+        # Send notification every 2 hours
+        yield env.timeout(120)
+        
+        # Check if teacher will respond to the notification
+        if random.random() < response_rate:
+            print(f"{env.now}: {name} responded to the notification")
+        else:
+            print(f"{env.now}: {name} ignored the notification")
+
+print("Teachers Activity Simulation")
+random.seed(RANDOM_SEED)
+env = simpy.Environment()
+
+# Create teachers and add them to the environment
+for i in range(NUM_TEACHERS):
+    response_rate = random.uniform(0.5, 1.0)  # Random response rate between 50% and 100%
+    env.process(teacher(env, f"Teacher {i}", response_rate))
+
+env.run(until=SIM_TIME)

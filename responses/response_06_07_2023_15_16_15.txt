@@ -1,0 +1,38 @@
+import random
+import simpy
+
+
+class Teacher:
+    def __init__(self, env, id):
+        self.env = env
+        self.id = id
+        self.attentional_availability = random.uniform(0, 1)
+        self.motivation = 1 - (self.env.now / 480)  # Assuming 8 hours working day
+        self.response_rate = 0
+
+    def process_notification(self):
+        if self.attentional_availability > self.env.now:
+            if self.motivation > random.uniform(0, 1):
+                self.response_rate += 1
+
+    def work(self):
+        while True:
+            yield self.env.timeout(120)  # Receive notification every 2 hours
+            self.process_notification()
+
+
+def teacher_generator(env, num_teachers):
+    for i in range(num_teachers):
+        teacher = Teacher(env, i)
+        env.process(teacher.work())
+
+
+print("Teachers Activity Simulation")
+
+env = simpy.Environment()
+env.process(teacher_generator(env, 50))
+env.run(until=480)  # Run simulation for 8 hours
+
+# Print response rate for each teacher
+for i in range(50):
+    print(f"Teacher {i + 1} response rate: {Teacher(env, i).response_rate}%")
