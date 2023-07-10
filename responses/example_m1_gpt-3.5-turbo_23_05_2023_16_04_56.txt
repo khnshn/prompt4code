@@ -1,0 +1,13 @@
+movement = self.size / self.walk_speed
+        while True:
+            try:
+                start = self.env.now
+                yield self.env.timeout(movement)
+            except simpy.Interrupt as i:
+                print(
+                    "[!] %s interrupted during walk by %s at %d"
+                    % (self, i.cause, self.env.now)
+                )
+                movement -= self.env.now - start
+                if movement > 0:
+                    print("resuming walk at %d, remaining %d" % (self.env.now, movement))

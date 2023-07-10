@@ -1,0 +1,23 @@
+distance_remaining = distance
+        while distance_remaining:
+            try:
+                start = self.env.now
+                yield self.env.timeout(
+                    distance_remaining / self.walk_speed * 60
+                )
+                print(
+                    "teacher arrived at %s in %d min"
+                    % (destination, self.env.now - start)
+                )
+                distance_remaining = 0
+            except simpy.Interrupt as i:
+                print(
+                    "[!] interrupted during walking by %s at %d"
+                    % (i.cause, self.env.now)
+                )
+                travel_time = self.env.now - start
+                distance_remaining -= (
+                    travel_time / 60 * self.walk_speed
+                )
+                if distance_remaining > 0:
+                    print("%d min left walking to %s" % (travel_time, destination))

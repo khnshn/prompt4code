@@ -1,0 +1,150 @@
+import simpy
+import random
+from enum import Enum
+
+
+class Status(Enum):
+    IDLE = (0,)
+    TEACHING = (1,)
+    ON_A_BREAK = (2,)
+    SELF_REPORTING = 3
+
+
+class Teacher:
+    def __init__(
+        self,
+        env,
+        teaching_duration,
+        break_room_distance,
+        break_duration,
+        self_report_min,
+        self_report_max,
+    ):
+        self.env = env
+        self.routine = env.process(self.run())
+        self.teaching_duration = teaching_duration
+        self.break_room_distance = break_room_distance
+        self.break_duration = break_duration
+        self.self_report_min = self_report_min
+        self.self_report_max = self_report_max
+        self.status = Status.IDLE
+
+    def run(self):
+        while True:
+            remaining_teaching_time = self.teaching_duration
+            while remaining_teaching_time:
+                try:
+                    start = self.env.now
+                    if remaining_teaching_time == self.teaching_duration:
+                        print("teacher starts teaching at %d" % self.env.now)
+                    yield self.env.process(self.teach(remaining_teaching_time))
+                    remaining_teaching_time = 0
+                except simpy.Interrupt as i:
+                    print(
+                        "🔔🎓 interrupted during teaching by %s at %d"
+                        % (i.cause, self.env.now)
+                    )
+                    remaining_teaching_time -= self.env.now - start
+                    if not random.choices([True, False], weights=[90, 10], k=1)[0]:
+                        remaining_teaching_time = yield self.env.process(
+                            self.self_report(
+                                remaining_teaching_time,
+                                self.self_report_min,
+                                self.self_report_max,
+                            )
+                        )
+                    else:
+                        print("❌ ignored")
+                    if remaining_teaching_time > 0:
+                        print(
+                            "teaching resumed at %d, remaining %d"
+                            % (self.env.now, remaining_teaching_time)
+                        )
+
+            break_duration = self.break_duration
+            remaining_break_time = break_duration
+            while remaining_break_time:
+                try:
+                    if remaining_break_time == break_duration:
+                        print(
+                            f"teacher started walking to the break room at {self.env.now}"
+                        )
+                    yield self.env.process(
+                        self.walk(self.break_room_distance / self.break_duration)
+                    )
+                    start = self.env.now
+                    print(f"teacher entered break room at {self.env.now}")
+                    yield self.env.timeout(remaining_break_time)
+                    remaining_break_time = 0
+                except simpy.Interrupt as i:
+                    print(
+                        "🔔☕ interrupted during break by %s at %d"
+                        % (i.cause, self.env.now)
+                    )
+                    remaining_break_time -= self.env.now - start
+                    if not random.choices([True, False], weights=[20, 80], k=1)[0]:
+                        remaining_break_time = yield self.env.process(
+                            self.self_report(
+                                remaining_break_time,
+                                self.self_report_min,
+                                self.self_report_max,
+                            )
+                        )
+                    else:
+                        print("❌ ignored")
+                    if remaining_break_time > 0:
+                        print("teacher continues break at %d" % self.env.now)
+
+            remaining_teaching_time = self.teaching_duration
+            while remaining_teaching_time:
+                try:
+                    start = self.env.now
+                    if remaining_teaching_time == self.teaching_duration:
+                        print(f"teacher starts teaching again at {self.env.now}")
+                    yield self.env.process(self.teach(remaining_teaching_time))
+                    remaining_teaching_time = 0
+                except simpy.Interrupt as i:
+                    print(
+                        f"🔔🎓 interrupted during teaching by {i.cause} at {self.env.now}"
+                    )
+                    remaining_teaching_time -= self.env.now - start
+                    if not random.choices([True, False], weights=[90, 10], k=1)[0]:
+                        remaining_teaching_time = yield self.env.process(
+                            self.self_report(
+                                remaining_teaching_time,
+                                self.self_report_min,
+                                self.self_report_max,
+                            )
+                        )
+                    else:
+                        print("❌ ignored")
+                    if remaining_teaching_time > 0:
+                        print(
+                            "teaching resumed at %d, remaining %d"
+                            % (self.env.now, remaining_teaching_time)
+                        )
+
+    def self_report(self, remaining_time, self_report_min, self_report_max):
+        if remaining_time >= self_report_max:
+            print("✅ at %d" % self.env.now)
+            start = self.env.now
+            self.status = Status.SELF_REPORTING
+            yield self.env.timeout(random.randint(self_report_min, self_report_max))
+            return remaining_time - (self.env.now - start)
+        else:
+            print("⏰ at %d" % self.env.now)
+            return remaining_time
+
+    def teach(self, teaching_time):
+        self.status = Status.TEACHING
+        yield self.env.timeout(teaching_time)
+
+    def walk(self, speed):
+        self.status = Status.WALKING
+        distance = 1
+        yield self.env.timeout(distance / speed)
+
+
+env = simpy.Environment()
+teacher = Teacher(env, 150, 5, 30, 1, 5)
+env.run(1000)

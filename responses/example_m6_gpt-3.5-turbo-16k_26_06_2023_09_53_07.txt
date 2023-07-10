@@ -1,0 +1,33 @@
+{
+    "ticks": 4000,
+    "actor": "teacher",
+    "self-report": {"min": 1, "max": 4},
+    "beep": {"interval_min": 60, "interval_max": 150},
+    "decision_body": "import random\n\nif random.random() < 0.5:\n    self.i_want_to = True\nelse:\n    self.i_want_to = False",
+    "routines": [
+        {
+            "activity": "teaching",
+            "busy": {"type": "random", "min": 50, "max": 100},
+            "icon": "🔔🎓",
+            "duration": {"type": "random", "min": 100, "max": 200},
+        },
+        {
+            "activity": "walking to break room",
+            "busy": {"type": "random", "min": 10, "max": 50},
+            "icon": "🔔🚶",
+            "duration": {"type": "random", "min": 10, "max": 30},
+        },
+        {
+            "activity": "taking a break",
+            "busy": {"type": "random", "min": 10, "max": 50},
+            "icon": "🔔☕",
+            "duration": {"type": "random", "min": 20, "max": 60},
+        },
+        {
+            "activity": "walking back to classroom",
+            "busy": {"type": "random", "min": 10, "max": 50},
+            "icon": "🔔🚶",
+            "duration": {"type": "random", "min": 10, "max": 30},
+        }
+    ]
+}

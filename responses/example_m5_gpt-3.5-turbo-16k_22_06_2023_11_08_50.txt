@@ -1,0 +1,17 @@
+import random
+import simpy
+
+class Teacher:
+    def __init__(self, env):
+        self.env = env
+        self.notification_process = env.process(self.notification())
+    
+    def notification(self):
+        while True:
+            yield self.env.timeout(2)  # Receive notification every 2 hours
+            response = random.choice([True, False])  # Randomly decide whether to respond or ignore
+            print(f"Teacher {self.env.now}: Notification received. Responded: {response}")
+
+env = simpy.Environment()
+teachers = [Teacher(env) for _ in range(50)]
+env.run(until=24)  # Run simulation for 24 hours
