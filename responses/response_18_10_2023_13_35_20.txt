@@ -1,0 +1,33 @@
+import random
+import simpy
+
+RANDOM_SEED = 42
+NUM_TEACHERS = 50
+ATTENTION_THRESHOLD = 0.5
+MOTIVATION_DECAY_RATE = 0.1
+NOTIFICATION_INTERVAL = 2
+
+
+def teacher(env, name, attention, motivation):
+    while True:
+        yield env.timeout(NOTIFICATION_INTERVAL)
+        if random.random() < attention * motivation:
+            print(f'{name} responded to the notification at {env.now}')
+        else:
+            print(f'{name} ignored the notification at {env.now}')
+
+
+def notification_generator(env, num_teachers):
+    for i in range(num_teachers):
+        motivation = 1 - (MOTIVATION_DECAY_RATE * env.now)
+        attention = random.random()
+        env.process(teacher(env, f'Teacher {i+1}', attention, motivation))
+
+
+print("Teachers' Activities")
+random.seed(RANDOM_SEED)
+env = simpy.Environment()
+
+env.process(notification_generator(env, NUM_TEACHERS))
+
+env.run(until=8)

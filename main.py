@@ -103,6 +103,7 @@ ALLOWED_BUILTINS = {
         "random": random,
         "object": object,
         "range": range,
+        "int": int,
     }
 }
 EMPHASIS = "Output executable code with no comments and no explanations."

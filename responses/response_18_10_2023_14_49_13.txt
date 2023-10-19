@@ -1,0 +1,2 @@
+response_rate = 7 / (7 * 24 * 60)
+print("Response Rate: {:.2%}".format(response_rate))

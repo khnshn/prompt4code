@@ -1,0 +1,44 @@
+import random
+import simpy
+
+RANDOM_SEED = 42
+NUM_TEACHERS = 50
+SIM_TIME = 480  # 8 hours
+
+ATTENTIONAL_THRESHOLD = 0.5
+
+
+class Teacher:
+    def __init__(self, env, name, notification):
+        self.env = env
+        self.name = name
+        self.notification = notification
+        self.attentional_availability = random.uniform(0, 1)
+        self.motivation = 1.0 - self.env.now / SIM_TIME
+
+    def process_notification(self):
+        expected_cost = self.attentional_availability * (1 - self.motivation)
+        if expected_cost > ATTENTIONAL_THRESHOLD:
+            print(f'{self.env.now}: {self.name} ignored the notification.')
+            return
+
+        response_time = random.uniform(1, 5)
+        yield self.env.timeout(response_time)
+        print(f'{self.env.now}: {self.name} responded to the notification.')
+
+
+def teacher_behavior(env, teacher):
+    while True:
+        yield env.timeout(2)
+        env.process(teacher.process_notification())
+
+
+print('Teachers\' Activities During the Day')
+random.seed(RANDOM_SEED)
+env = simpy.Environment()
+
+for i in range(NUM_TEACHERS):
+    teacher = Teacher(env, f'Teacher {i + 1}', f'Notification {i + 1}')
+    env.process(teacher_behavior(env, teacher))
+
+env.run(until=SIM_TIME)

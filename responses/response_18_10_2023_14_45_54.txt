@@ -1,0 +1,5 @@
+total_notifications = 7 * 7 
+response_rate = 0.85 
+response_count = int(response_rate * total_notifications)
+
+print("Response Rate: {:.2f}".format(response_count / total_notifications))

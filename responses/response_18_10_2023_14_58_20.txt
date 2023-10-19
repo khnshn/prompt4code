@@ -1,0 +1,33 @@
+```python
+import random
+
+import simpy
+
+
+RANDOM_SEED = 42
+NUM_TEACHERS = 50
+SIM_TIME = 8 * 12  # 8 hours * 12 iterations per hour
+
+
+def teacher(env, name, attentional_availability, motivation):
+    response_rate = attentional_availability * motivation
+    while True:
+        yield env.timeout(2)
+        if random.random() < response_rate:
+            print(f"{name} responded to the notification at {env.now}")
+        else:
+            print(f"{name} ignored the notification at {env.now}")
+
+
+print("Teachers' Activities Simulation")
+
+random.seed(RANDOM_SEED)
+env = simpy.Environment()
+
+for i in range(NUM_TEACHERS):
+    motivation = 1 - (i / NUM_TEACHERS)  # Linearly decreasing motivation
+    attentional_availability = random.uniform(0, 1)
+    env.process(teacher(env, f"Teacher {i + 1}", attentional_availability, motivation))
+
+env.run(until=SIM_TIME)
+```
