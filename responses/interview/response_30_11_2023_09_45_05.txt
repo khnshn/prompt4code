@@ -1,0 +1,48 @@
+import random
+import simpy
+
+
+RANDOM_SEED = 42
+NUM_TEACHERS = 50
+SIMULATION_TIME = 24  # 24 hours
+
+
+class Teacher(object):
+    def __init__(self, env, name):
+        self.env = env
+        self.name = name
+
+    def process_notification(self, notification):
+        response_rate = random.uniform(0, 1)
+
+        if response_rate > 0.5:
+            print(f'{self.name} responded to the notification.')
+        else:
+            print(f'{self.name} ignored the notification.')
+
+        yield self.env.timeout(0)  # Dummy process time
+
+
+def teacher_generator(env, teachers):
+    notifications = ['Notification 1', 'Notification 2', 'Notification 3']
+
+    while True:
+        for teacher in teachers:
+            notification = random.choice(notifications)
+            env.process(teacher.process_notification(notification))
+
+        yield env.timeout(2)  # Every 2 hours
+
+
+print('Teachers Activity Simulation')
+print('Running simulation...')
+random.seed(RANDOM_SEED)
+
+env = simpy.Environment()
+
+teachers = [Teacher(env, f'Teacher {i+1}') for i in range(NUM_TEACHERS)]
+
+env.process(teacher_generator(env, teachers))
+
+env.run(until=SIMULATION_TIME)
+print('Simulation completed.')

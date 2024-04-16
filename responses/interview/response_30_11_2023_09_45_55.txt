@@ -1,0 +1,33 @@
+import simpy
+import random
+
+RESPONSE_RATE = 0.6
+SIM_TIME = 24  # Simulation time in hours
+
+class Teacher(object):
+
+    def __init__(self, env, name):
+        self.env = env
+        self.name = name
+        self.notification_process = env.process(self.notification(env))
+
+    def notification(self, env):
+        while True:
+            yield env.timeout(2)
+            if random.random() < RESPONSE_RATE:
+                print("{0}: Received a notification.".format(self.name))
+                self.respond_to_notification(env)
+            else:
+                print("{0}: Ignored a notification.".format(self.name))
+
+    def respond_to_notification(self, env):
+        print("{0}: Responded to the notification.".format(self.name))
+
+
+print("Teachers Activity Simulation:")
+
+env = simpy.Environment()
+
+teachers = [Teacher(env, 'Teacher {}'.format(i+1)) for i in range(50)]
+
+env.run(until=SIM_TIME)
